@@ -11,12 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Load functions
   sentEmail()
+
 });
 
 function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector("#email-view").style.display = "none";
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -28,7 +30,8 @@ function compose_email() {
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
-  document.querySelector('#emails-view').style.display = 'block';  
+  document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector("#email-view").style.display = "none";  
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
@@ -37,6 +40,7 @@ function load_mailbox(mailbox) {
   // Render mailbox emails
   renderEmails(mailbox)
 
+
   function renderEmails(mailbox) {
     // Fetch the API for the emails
     fetch(`/emails/${mailbox}`)
@@ -44,24 +48,24 @@ function load_mailbox(mailbox) {
     .then(data => {
       data.forEach(item => {
         // Create the corresponding html content for each mail
-        const emailDiv = document.createElement("div")
+        const emailDiv = document.createElement("div");
         
         // Give Div id
-        emailDiv.id = "email-content"
+        emailDiv.id = item.id
         
-        const person = document.createElement("h5")
+        const person = document.createElement("h5");
         
         // Check if mailbox is sender or reciever
         if (mailbox === "sent") {
-          person.textContent = item.recipients.join(", ")  
+          person.textContent = `Sent to: ${item.recipients.join(", ")}`  
         } else {
-          person.textContent = item.sender
+          person.textContent = `From: ${item.sender}`
         }
         
-        const reason = document.createElement("p")
-        reason.textContent = item.subject
-        const date = document.createElement("small")
-        date.textContent = item.timestamp
+        const reason = document.createElement("p");
+        reason.textContent = `Subject: ${item.subject}`
+        const date = document.createElement("small");
+        date.textContent = `Date: ${item.timestamp}`
         emailDiv.append(person, reason, date)
         document.querySelector("#emails-view").append(emailDiv)
 
@@ -73,11 +77,11 @@ function load_mailbox(mailbox) {
           emailDiv.style.backgroundColor = "white"
         }
 
-        // Click the email
+        // Go to specific mail
+        emailDiv.onclick = () => mailView(item.id, mailbox)
       })
     })
   };
-
 }
 
 
@@ -118,4 +122,90 @@ function sentEmail() {
     // Avoid reloading the page
     return false;
   };
+}
+
+
+// Function to see a  specific email
+function mailView(id, mailbox) {
+  // Request JSON for the email id
+  fetch(`/emails/${id}`)
+  .then(response => response.json())
+  .then(email => {
+    // load the email-view div and hide the others
+    document.querySelector("#email-view").style.display = "block"
+    document.querySelector("#emails-view").style.display = "none"
+    
+    // Clear the view to avoid duplicates
+    document.querySelector("#email-view").innerHTML = ""
+
+    // render mail information
+    const mailDiv = document.createElement("div");
+    const sender = document.createElement("p");
+    sender.textContent = `From: ${email.sender}`
+    const recipient = document.createElement("p");
+    recipient.textContent = `To: ${email.recipients.join(", ")}`
+    const subject = document.createElement("h3");
+    subject.textContent = `Subject: ${email.subject}`
+    const body = document.createElement("p");
+    body.textContent = `Message: ${email.body}`
+    const timestamp = document.createElement("small");
+    timestamp.textContent = `Date: ${email.timestamp}`
+
+    const archiveButton = document.createElement("button");
+    archiveButton.className = "archive"
+    const replyButton = document.createElement("button");
+    replyButton.textContent = "Reply"
+    replyButton.className = "btn btn-sm btn-outline-primary"
+
+    // Add archive Unarchive button according to mail status
+    if (email.archived) {
+      archiveButton.textContent = "Unarchive"
+    } else {
+      archiveButton.textContent = "Archive"
+    }
+
+    if (mailbox === "sent") {
+      mailDiv.append(subject, sender, recipient, timestamp, body)
+      document.querySelector("#email-view").append(mailDiv)
+    } else {
+      mailDiv.append(subject, sender, recipient, timestamp, body)
+      document.querySelector("#email-view").append(archiveButton, mailDiv, replyButton)
+    }
+
+    // Mark the mail as read
+    fetch(`/emails/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        read: true
+      })
+    })
+
+    // Send or delete mail from archive
+    archiveButton.onclick = () => mailArchive(email.id, email.archived)
+
+    // Reply the mail
+    replyButton.onclick = () => reply(email)
+  })
+} 
+
+
+// Function to reply messages
+function reply() {
+  // User should see the reply button on the message ()
+  alert("You haven't finish this yet!")
+
+}
+
+
+
+
+// Function to updtade the archived state
+function mailArchive(id, archiveState) {
+  fetch(`/emails/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      archived: !archiveState
+    })
+  })
+  .then(() => load_mailbox("inbox"))
 }

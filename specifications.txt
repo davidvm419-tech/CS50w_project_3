@@ -14,21 +14,22 @@ Load the apropiate Inbox, Sent mailbox or Archive (Done)
     else background white (Done)
 
 View Email
-Clicking the email should take to a view with the email content
-    Make a GET request to /emails/<email_id> to get the email
-    Should show the email sender, recipients, subject, timestamp and body
-    inbox.html probably needs another div to show the email
-    When the email is clicked on, mark it as read
+Clicking the email should take to a view with the email content (Done)
+    Make a GET request to /emails/<email_id> to get the email (Done)
+    Should show the email sender, recipients, subject, timestamp and body (Done)
+    inbox.html probably needs another div to show the email (Done)
+    When the email is clicked on, mark it as read (Done)
 
 Archive and Unarchive
-Users should be able to archive or unarchive emails 
-    When viewing an inbox email, a button must allow to archive the email
-    if is archive a button must allow to unarchive the email (does not apply to sent emails)
-    Once the email is in the archive or unarchive load the user Inbox
+Users should be able to archive or unarchive emails (Done)
+    When viewing an inbox email, a button must allow to archive the email (Done)
+    if is archive a button must allow to unarchive the email (does not apply to sent emails) (Done)
+    Once the email is in the archive or unarchive load the user Inbox (Done)
 
 Reply
 Users must be able tu Reply
-    When seeing an email users must see a Reply button
+    When seeing an email users must see a Reply button (Done)
+    Click the button must take the user to the composition form
     The form must be prefill with the recipient field (who sent the original email)
     The form must be prefill with the subject field (if is foo the new must be Re: foo, unless already has the Re:)
     The body must be prefill with a line like "On Jan 1 2020, 12:00 AM foo@example.com wrote:" followed by the original text
