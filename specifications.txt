@@ -29,7 +29,7 @@ Users should be able to archive or unarchive emails (Done)
 Reply
 Users must be able tu Reply
     When seeing an email users must see a Reply button (Done)
-    Click the button must take the user to the composition form
-    The form must be prefill with the recipient field (who sent the original email)
-    The form must be prefill with the subject field (if is foo the new must be Re: foo, unless already has the Re:)
-    The body must be prefill with a line like "On Jan 1 2020, 12:00 AM foo@example.com wrote:" followed by the original text
+    Click the button must take the user to the composition form (Done)
+    The form must be prefill with the recipient field (who sent the original email) (Done)
+    The form must be prefill with the subject field (if is foo the new must be Re: foo, unless already has the Re:) (Done)
+    The body must be prefill with a line like "On Jan 1 2020, 12:00 AM foo@example.com wrote:" followed by the original text (Done)

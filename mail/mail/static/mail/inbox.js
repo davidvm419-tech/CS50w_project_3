@@ -9,9 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // By default, load the inbox
   load_mailbox('inbox');
 
-  // Load functions
-  sentEmail()
-
 });
 
 function compose_email() {
@@ -25,6 +22,9 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+
+  // Handle the form submition
+  document.querySelector("#compose-form").onsubmit = sendEmail
 }
 
 function load_mailbox(mailbox) {
@@ -52,6 +52,7 @@ function load_mailbox(mailbox) {
         
         // Give Div id
         emailDiv.id = item.id
+        emailDiv.className = "emails-list"
         
         const person = document.createElement("h5");
         
@@ -86,42 +87,40 @@ function load_mailbox(mailbox) {
 
 
 // Function to send email and data to the server
-function sentEmail() {
+function sendEmail() {
   // Capture form data when form is submited
-  document.querySelector("#compose-form").onsubmit = () => {
-    const sendTo = document.querySelector("#compose-recipients").value;
-    const subject = document.querySelector("#compose-subject").value;
-    const body = document.querySelector("#compose-body").value;
+  const sendTo = document.querySelector("#compose-recipients").value;
+  const subject = document.querySelector("#compose-subject").value;
+  const body = document.querySelector("#compose-body").value;
 
-    // Create JSON email
-    fetch("/emails", {
-      method: "POST",
-      body: JSON.stringify({
-        recipients: sendTo,
-        subject: subject,
-        body: body,
-      })
+  // Create JSON email
+  fetch("/emails", {
+    method: "POST",
+    body: JSON.stringify({
+      recipients: sendTo,
+      subject: subject,
+      body: body,
     })
+  })
 
-    // Send the data to the database
-    .then(response => response.json())
-    .then(result => {
+  // Send the data to the database
+  .then(response => response.json())
+  .then(result => {
 
-      // Send alert in case of error
-      if (result.error) {
-        alert(result.error)
-        // Load compose it fails
-        compose_email()
-      } else {
-        alert(result.message)
-        // Load sent view once is sent
-        load_mailbox("sent")
-      }
-    });
+    // Send alert in case of error
+    if (result.error) {
+      alert(result.error)
+      // Load compose it fails
+      compose_email()
+    } else {
+      alert(result.message)
+      // Load sent view once is sent
+      load_mailbox("sent")
+    }
+  });
 
-    // Avoid reloading the page
-    return false;
-  };
+  // Avoid reloading the page
+  return false;
 }
 
 
@@ -140,6 +139,7 @@ function mailView(id, mailbox) {
 
     // render mail information
     const mailDiv = document.createElement("div");
+    mailDiv.className = "email-content"
     const sender = document.createElement("p");
     sender.textContent = `From: ${email.sender}`
     const recipient = document.createElement("p");
@@ -152,7 +152,7 @@ function mailView(id, mailbox) {
     timestamp.textContent = `Date: ${email.timestamp}`
 
     const archiveButton = document.createElement("button");
-    archiveButton.className = "archive"
+    archiveButton.className = "btn btn-sm btn-outline-primary"
     const replyButton = document.createElement("button");
     replyButton.textContent = "Reply"
     replyButton.className = "btn btn-sm btn-outline-primary"
@@ -190,14 +190,24 @@ function mailView(id, mailbox) {
 
 
 // Function to reply messages
-function reply() {
-  // User should see the reply button on the message ()
-  alert("You haven't finish this yet!")
+function reply(email) {
+  // Load the compose view
+  document.querySelector("#compose-view").style.display = "block"
+  document.querySelector("#emails-view").style.display = "none"
+  document.querySelector("#email-view").style.display = "none"
 
+  // Fill the view with email information
+
+  // Check if subject has Re or not
+  const subjectWithRe = email.subject.startsWith("Re:")
+
+  document.querySelector("#compose-recipients").value = email.sender
+  document.querySelector("#compose-subject").value = (subjectWithRe) ? email.subject : `Re: ${email.subject}`
+  document.querySelector("#compose-body").value = `On ${email.timestamp} ${email.sender} wrote: \n\n${email.body}`
+
+  // call send function onsubmit
+  document.querySelector("#compose-form").onsubmit = sendEmail
 }
-
-
-
 
 // Function to updtade the archived state
 function mailArchive(id, archiveState) {
