@@ -54,7 +54,7 @@ function load_mailbox(mailbox) {
         emailDiv.id = item.id
         emailDiv.className = "emails-list"
         
-        const person = document.createElement("h5");
+        const person = document.createElement("h3");
         
         // Check if mailbox is sender or reciever
         if (mailbox === "sent") {
@@ -63,7 +63,7 @@ function load_mailbox(mailbox) {
           person.textContent = `From: ${item.sender}`
         }
         
-        const reason = document.createElement("p");
+        const reason = document.createElement("h5");
         reason.textContent = `Subject: ${item.subject}`
         const date = document.createElement("small");
         date.textContent = `Date: ${item.timestamp}`
@@ -141,14 +141,19 @@ function mailView(id, mailbox) {
     const mailDiv = document.createElement("div");
     mailDiv.className = "email-content"
     const sender = document.createElement("p");
+    sender.className = "email-sender"
     sender.textContent = `From: ${email.sender}`
     const recipient = document.createElement("p");
+    recipient.className ="email-recipients"
     recipient.textContent = `To: ${email.recipients.join(", ")}`
     const subject = document.createElement("h3");
+    subject.className = "email-subject"
     subject.textContent = `Subject: ${email.subject}`
     const body = document.createElement("p");
+    body.className = "email-body"
     body.textContent = `Message: ${email.body}`
     const timestamp = document.createElement("small");
+    timestamp.className = "email-date"
     timestamp.textContent = `Date: ${email.timestamp}`
 
     const archiveButton = document.createElement("button");
