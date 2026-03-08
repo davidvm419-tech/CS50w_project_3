@@ -54,7 +54,7 @@ function load_mailbox(mailbox) {
         emailDiv.id = item.id
         emailDiv.className = "emails-list"
         
-        const person = document.createElement("h3");
+        const person = document.createElement("h5");
         
         // Check if mailbox is sender or reciever
         if (mailbox === "sent") {
@@ -63,16 +63,16 @@ function load_mailbox(mailbox) {
           person.textContent = `From: ${item.sender}`
         }
         
-        const reason = document.createElement("h5");
+        const reason = document.createElement("h4");
         reason.textContent = `Subject: ${item.subject}`
         const date = document.createElement("small");
         date.textContent = `Date: ${item.timestamp}`
-        emailDiv.append(person, reason, date)
+        emailDiv.append(reason, person, date)
         document.querySelector("#emails-view").append(emailDiv)
 
         // Check if mail is read or not
         if (item.read) {
-          emailDiv.style.backgroundColor = "gray"
+          emailDiv.style.backgroundColor = "#dcdcdc"
 
         } else {
           emailDiv.style.backgroundColor = "white"
